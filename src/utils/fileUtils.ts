@@ -1,23 +1,33 @@
-import { readdirSync } from 'fs';
-import { gt, valid, coerce } from 'semver';
+import { Dirent, existsSync, readdirSync } from 'fs';
+import * as path from 'path';
+import { coerce, rcompare, SemVer } from 'semver';
 import { Uri, workspace } from 'vscode';
 
 /**
- * Function to find the highest semver folder from a path. Intended to work with only Delphi and MSFramework folders.
+ * Finds the `bin` folder of the highest versioned installation folder (e.g. `Studio\23.0`) that contains a given file.
+ * Leftover version folders without the file (e.g. after an uninstall) are skipped.
  *
- * @param path path to directory to traverse
- * @returns folder name with highest semver
+ * @param installsDir directory containing versioned installation folders
+ * @param requiredFile file that must exist in the `bin` folder
+ * @returns path to the `bin` folder, or undefined if none qualifies
  */
-export function highestVersion(path: string) {
-    const ver = readdirSync(path, { withFileTypes: true })
-        .filter((name) => name.isDirectory() && valid(coerce(name.name)))
-        .map((el) => el.name)
-        .reduce((highest, current) => {
-            return gt(coerce(current), coerce(highest)) ? current : highest;
-        }, '0.0.0');
-
-    if (ver === '0.0.0') throw "Couldn't find suitable installations in " + path;
-    return ver;
+export function findLatestInstallBin(
+    installsDir: string,
+    requiredFile: string
+): string | undefined {
+    let entries: Dirent[];
+    try {
+        entries = readdirSync(installsDir, { withFileTypes: true });
+    } catch {
+        return undefined;
+    }
+    return entries
+        .filter((entry) => entry.isDirectory())
+        .map((entry) => ({ name: entry.name, version: coerce(entry.name) }))
+        .filter((entry): entry is { name: string; version: SemVer } => entry.version !== null)
+        .sort((a, b) => rcompare(a.version, b.version))
+        .map((entry) => path.join(installsDir, entry.name, 'bin'))
+        .find((bin) => existsSync(path.join(bin, requiredFile)));
 }
 
 /**
