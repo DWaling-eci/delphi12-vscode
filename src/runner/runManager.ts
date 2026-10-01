@@ -25,7 +25,7 @@ export class RunManager {
             window.showErrorMessage('Delphi: No Delphi installation found to build the project');
             return;
         }
-        await initRunScript(); // Always run the current script version
+        if (!(await initRunScript())) return; // Always run the current script version
 
         const { projectDir, dproj, exePath } = resolveProjectPaths(json.settings);
         // Values are passed as separate arguments (no shell) so paths can't inject commands.

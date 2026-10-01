@@ -31,6 +31,16 @@ export function findLatestInstallBin(
 }
 
 /**
+ * Converts a `file:` URI to a filesystem path; any other value is treated as a path already.
+ *
+ * @param value file URI or filesystem path
+ * @returns filesystem path
+ */
+export function toFsPath(value: string): string {
+    return /^file:/i.test(value) ? Uri.parse(value).fsPath : value;
+}
+
+/**
  * Checks if a file exists in a path
  *
  * @param uri File path as URI

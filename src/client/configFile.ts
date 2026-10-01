@@ -11,7 +11,7 @@ import {
 } from 'vscode';
 import { DidChangeConfigurationNotification, LanguageClient } from 'vscode-languageclient/node';
 import { initRunScript } from '../runner/scripts';
-import { fileExists } from '../utils/fileUtils';
+import { fileExists, toFsPath } from '../utils/fileUtils';
 
 /**
  * Init configuration file. Loads an existing config file or propmts user to pick one.
@@ -42,7 +42,7 @@ export async function initConfig() {
                     }
                 });
         }
-    } else if (!(await fileExists(Uri.parse(configFile)))) {
+    } else if (!(await fileExists(Uri.file(toFsPath(configFile))))) {
         // If previously set LSP config file doesn't exist any more, request to select a new one
         updateConfigWithSelectedItem('no_config_available');
         window
@@ -169,10 +169,10 @@ export async function loadConfigFileJson(config?: string): Promise<DelphiLSPConf
         }
         config = storedValue;
     }
-    const configPath = Uri.parse(config).fsPath;
+    const configPath = toFsPath(config);
     try {
         const json: DelphiLSPConfig = JSON.parse(readFileSync(configPath, 'utf8'));
-        json.settings.project = Uri.parse(json.settings.project).fsPath;
+        json.settings.project = toFsPath(json.settings.project);
         return json;
     } catch (e) {
         window.showErrorMessage(`Delphi: Could not read LSP config file "${configPath}": ${e}`);

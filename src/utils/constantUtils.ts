@@ -1,7 +1,8 @@
 import { existsSync } from 'fs';
 import * as path from 'path';
-import { Uri, window, workspace } from 'vscode';
+import { window, workspace } from 'vscode';
 import { getDefaultDelphiBinPath, LSP_BIN } from '../constants';
+import { toFsPath } from './fileUtils';
 
 /**
  * Get the Delphi `bin` directory. Uses the delphi.bin setting when it contains DelphiLSP,
@@ -10,11 +11,9 @@ import { getDefaultDelphiBinPath, LSP_BIN } from '../constants';
  * @returns bin directory, or undefined if no usable installation was found
  */
 export function getDelphiBinDirectory(): string | undefined {
-    let configured = workspace.getConfiguration('delphi').get<string>('bin')?.trim();
-    if (configured) {
-        if (configured.startsWith('file:')) {
-            configured = Uri.parse(configured).fsPath;
-        }
+    const setting = workspace.getConfiguration('delphi').get<string>('bin')?.trim();
+    if (setting) {
+        const configured = toFsPath(setting);
         if (existsSync(path.join(configured, LSP_BIN))) {
             return configured;
         }
