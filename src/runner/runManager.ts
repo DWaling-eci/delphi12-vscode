@@ -62,8 +62,9 @@ export class RunManager {
 
         const execution = await tasks.executeTask(task);
 
-        tasks.onDidEndTaskProcess(async (e) => {
+        const listener = tasks.onDidEndTaskProcess((e) => {
             if (e.execution === execution) {
+                listener.dispose();
                 if (e.exitCode === 0) {
                     window.showInformationMessage('Delphi: Exited successfully!');
                 } else {
