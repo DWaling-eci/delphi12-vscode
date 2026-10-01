@@ -11,6 +11,15 @@
     "engines": {
         "vscode": "^1.91.0"
     },
+    "extensionKind": [
+        "workspace"
+    ],
+    "capabilities": {
+        "untrustedWorkspaces": {
+            "supported": false,
+            "description": "The extension launches DelphiLSP and generates/runs build scripts based on workspace files and settings."
+        }
+    },
     "categories": [
         "Programming Languages"
     ],
