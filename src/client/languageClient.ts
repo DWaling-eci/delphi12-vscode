@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { workspace, ExtensionContext, commands, Uri } from 'vscode';
+import { workspace, ExtensionContext, commands } from 'vscode';
 
 import {
     LanguageClient,
@@ -26,7 +26,6 @@ let client: LanguageClient;
 export async function activateLSPClient(context: ExtensionContext) {
     // Get config for the extension
     const config = workspace.getConfiguration('delphi');
-    const binPath = config.get<string>('bin');
 
     // Get full path for the LSP executable
     const delphiLSP = path.join(getDelphiBinDirectory(), LSP_BIN);

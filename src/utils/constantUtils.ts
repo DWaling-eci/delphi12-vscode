@@ -12,6 +12,7 @@ export function getDelphiBinDirectory() {
     let binPath = config.get<string>('bin');
 
     try {
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions -- known bug, fixed in the Delphi 12 update
         fileExists(Uri.parse(binPath, true)) ? binPath : DELPHI_BIN_PATH;
     } catch {
         binPath = DELPHI_BIN_PATH;

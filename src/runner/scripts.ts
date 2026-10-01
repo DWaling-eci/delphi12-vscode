@@ -1,4 +1,4 @@
-import path = require('path');
+import * as path from 'path';
 import { loadConfigFileJson } from '../client/configFile';
 import { Uri, workspace, WorkspaceEdit } from 'vscode';
 import { getDelphiBinDirectory } from '../utils/constantUtils';

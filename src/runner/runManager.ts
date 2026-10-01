@@ -1,4 +1,4 @@
-import path = require('path');
+import * as path from 'path';
 import { loadConfigFileJson } from '../client/configFile';
 import { ProcessExecution, Task, tasks, TaskScope, window, workspace } from 'vscode';
 
@@ -19,7 +19,7 @@ export class RunManager {
         const projectName = path.basename(dccSettings.project).split('.')[0];
 
         const wsPath = workspace.workspaceFolders[0].uri.fsPath;
-        let compileProcess = new ProcessExecution(
+        const compileProcess = new ProcessExecution(
             `${wsPath}/.vscode/delphi/scripts/run.bat`,
             [`${wsPath}/.vscode/delphi/scripts/${projectName}_run.ps1`, 'run'],
             {
@@ -37,7 +37,7 @@ export class RunManager {
             compileProcess
         );
 
-        var execution = await tasks.executeTask(task);
+        const execution = await tasks.executeTask(task);
 
         tasks.onDidEndTaskProcess(async (e) => {
             if (e.execution === execution) {

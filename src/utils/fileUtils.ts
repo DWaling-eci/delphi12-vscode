@@ -1,6 +1,6 @@
 import { readdirSync } from 'fs';
 import { gt, valid, coerce } from 'semver';
-import { Uri, window, workspace } from 'vscode';
+import { Uri, workspace } from 'vscode';
 
 /**
  * Function to find the highest semver folder from a path. Intended to work with only Delphi and MSFramework folders.
