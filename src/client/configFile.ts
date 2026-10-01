@@ -161,22 +161,23 @@ export function getConfigFilePath(): string {
  *
  * @returns json containing the config file
  */
-export async function loadConfigFileJson(config?: string) {
+export async function loadConfigFileJson(config?: string): Promise<DelphiLSPConfig | false> {
     if (!config) {
         const storedValue = getConfigFilePath();
-        if (storedValue === 'no_config_available') {
+        if (!storedValue || storedValue === 'no_config_available') {
             return false;
         }
         config = storedValue;
     }
-    const path = decodeURI(config.replace('file:///', '')).replace('c%3A', 'C:/');
-    const data = readFileSync(path, 'utf8');
-    const json: DelphiLSPConfig = await JSON.parse(data);
-    json.settings.project = decodeURI(json.settings.project.replace('file:///', '')).replace(
-        'C%3A',
-        'C:/'
-    );
-    return json as DelphiLSPConfig;
+    const configPath = Uri.parse(config).fsPath;
+    try {
+        const json: DelphiLSPConfig = JSON.parse(readFileSync(configPath, 'utf8'));
+        json.settings.project = Uri.parse(json.settings.project).fsPath;
+        return json;
+    } catch (e) {
+        window.showErrorMessage(`Delphi: Could not read LSP config file "${configPath}": ${e}`);
+        return false;
+    }
 }
 
 class UriItem implements QuickPickItem {
