@@ -3,6 +3,6 @@ node_modules
 .vscode-test
 .vscode
 .idea
-package-lock.json
 *.vsix
 out
+*.tsbuildinfo
