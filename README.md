@@ -13,13 +13,18 @@ Delphi extension to allow full developer tooling for Delphi in VSCode.
 
 ## Requirements
 
-- Delphi 11 installed
+- Delphi 11 Alexandria or Delphi 12 Athens installed (tested with Delphi 12)
+  - The newest installation under `Program Files (x86)\Embarcadero\Studio` that contains `DelphiLSP.exe` is used, unless `delphi.bin` is set
+- VS Code 1.91 or later
+- A trusted workspace (the extension is disabled in Restricted Mode because it starts DelphiLSP and runs build scripts)
 - Project LSP config generated with Delphi
   - In Delphi: Tools > Options > User Interface > Editor > Language (pick Delphi from the dropdown ) > Code Insight and turn on ‘Generate LSP Config’, and close and reopen your project.
+- For building and running: the project's `.dproj` next to its `.dpr`, and Windows PowerShell
+  - `Delphi: Run current project` writes `.vscode/delphi/scripts/run.ps1` and builds the `.dproj` with MSBuild using the RAD Studio environment (`rsvars.bat`)
 
 ## Extension Settings
 
-* `delphi.bin` Path to delphi `bin` folder. Defaults to newest installation.
+* `delphi.bin` Path to delphi `bin` folder (must contain `DelphiLSP.exe`). Defaults to newest installation.
 * `delphi.serverType` Defines the operation mode
 * `delphi.agentCount` Defines the number of sub processes (agents) when serverType is controller. If agentCount > 1 then one process will be dedicated to Error Insight
 * `delphi.logModes` Bit mask defining logging modes [1 (RawInputMessage), 2 (RawOutputMessage), 4 (Queue), 8 (Processor), 16 (Server), 32 (AgentFacade), 64 (DCC related), 128 (LSP Inspector traces)]
