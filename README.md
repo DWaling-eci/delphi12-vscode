@@ -2,10 +2,10 @@
 
 Delphi extension to allow developer tooling for Delphi in VSCode.
 
-If you have a *licensed install* of Embarcadero Delphi, this extension can be very useful should you need the help of a simple IDE to diagnose issues in dedicated build environments (e.g.: a VM used by your build pipelines), which typically do not need a full RAD Studion setup. Embarcadero allows you to copy the required binaries for the CLI utilities for checking and compiling your code to your build a build environment, and the extension configuration allows you to point to a non-standard Delphi bin path.
+If you have a *licensed install* of Embarcadero Delphi, this extension can be very useful should you need the help of a simple IDE to diagnose issues in dedicated build environments (e.g.: a VM used by your build pipelines), which typically do not need a full RAD Studio setup. Embarcadero allows you to copy the required binaries for the CLI utilities, for checking and compiling a project, to a build environment, and the extension configuration allows you to point to a non-standard Delphi bin path.
 
 > [!NOTE]
-> You will need a valid licensed Delphi install to copy the build tools from when setting up a dedicated build machine. This use scenario is covered and cited in Embarcadero documentation, however the required binaries are not openly distrubuted separately.
+> You will need a valid licensed Delphi install to copy the build tools from when setting up a dedicated build machine. This use scenario is covered and cited in Embarcadero documentation, however the required binaries are not openly distributed separately.
 
 ## Features
 
@@ -48,4 +48,4 @@ Check out [CHANGELOG](./CHANGELOG.md).
   - "Reverse engineered" (opened the extension with 7-Zip) some of the code for handling the custom notifications that are needed to be sent to the LSP.
 
 > [!NOTE]
-> From the original author: This extension was only built to meet my own demand, and published on the off-chance that it might help someone else. There is now over 5K installations however, and I assume most needs are not met for Delphi development at the current state of the extension. Thus, **I encourage you to open a PR for any features you might miss**. I will hapily review and add any improvements or features.
+> From the original author: This extension was only built to meet my own demand, and published on the off-chance that it might help someone else. There is now over 5K installations however, and I assume most needs are not met for Delphi development at the current state of the extension. Thus, **I encourage you to open a PR for any features you might miss**. I will happily review and add any improvements or features.
