@@ -11,7 +11,7 @@ import {
 } from 'vscode';
 import { DidChangeConfigurationNotification, LanguageClient } from 'vscode-languageclient/node';
 import { initRunScript } from '../runner/scripts';
-import { fileExists } from '../utils/fileUtils';
+import { fileExists, toFsPath } from '../utils/fileUtils';
 
 /**
  * Init configuration file. Loads an existing config file or propmts user to pick one.
@@ -42,7 +42,7 @@ export async function initConfig() {
                     }
                 });
         }
-    } else if (!(await fileExists(Uri.parse(configFile)))) {
+    } else if (!(await fileExists(Uri.file(toFsPath(configFile))))) {
         // If previously set LSP config file doesn't exist any more, request to select a new one
         updateConfigWithSelectedItem('no_config_available');
         window
@@ -161,22 +161,23 @@ export function getConfigFilePath(): string {
  *
  * @returns json containing the config file
  */
-export async function loadConfigFileJson(config?: string) {
+export async function loadConfigFileJson(config?: string): Promise<DelphiLSPConfig | false> {
     if (!config) {
         const storedValue = getConfigFilePath();
-        if (storedValue === 'no_config_available') {
+        if (!storedValue || storedValue === 'no_config_available') {
             return false;
         }
         config = storedValue;
     }
-    const path = decodeURI(config.replace('file:///', '')).replace('c%3A', 'C:/');
-    const data = readFileSync(path, 'utf8');
-    const json: DelphiLSPConfig = await JSON.parse(data);
-    json.settings.project = decodeURI(json.settings.project.replace('file:///', '')).replace(
-        'C%3A',
-        'C:/'
-    );
-    return json as DelphiLSPConfig;
+    const configPath = toFsPath(config);
+    try {
+        const json: DelphiLSPConfig = JSON.parse(readFileSync(configPath, 'utf8'));
+        json.settings.project = toFsPath(json.settings.project);
+        return json;
+    } catch (e) {
+        window.showErrorMessage(`Delphi: Could not read LSP config file "${configPath}": ${e}`);
+        return false;
+    }
 }
 
 class UriItem implements QuickPickItem {

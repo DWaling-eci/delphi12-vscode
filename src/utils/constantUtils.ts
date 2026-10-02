@@ -1,21 +1,25 @@
-import { Uri, workspace } from 'vscode';
-import { fileExists } from './fileUtils';
-import { DELPHI_BIN_PATH } from '../constants';
+import { existsSync } from 'fs';
+import * as path from 'path';
+import { window, workspace } from 'vscode';
+import { getDefaultDelphiBinPath, LSP_BIN } from '../constants';
+import { toFsPath } from './fileUtils';
 
 /**
- * Get delphi binary path. Tries to load delphi.bin config value. Defaults to newest installation.
+ * Get the Delphi `bin` directory. Uses the delphi.bin setting when it contains DelphiLSP,
+ * otherwise the newest installation.
  *
- * @returns string
+ * @returns bin directory, or undefined if no usable installation was found
  */
-export function getDelphiBinDirectory() {
-    const config = workspace.getConfiguration('delphi');
-    let binPath = config.get<string>('bin');
-
-    try {
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions -- known bug, fixed in the Delphi 12 update
-        fileExists(Uri.parse(binPath, true)) ? binPath : DELPHI_BIN_PATH;
-    } catch {
-        binPath = DELPHI_BIN_PATH;
+export function getDelphiBinDirectory(): string | undefined {
+    const setting = workspace.getConfiguration('delphi').get<string>('bin')?.trim();
+    if (setting) {
+        const configured = toFsPath(setting);
+        if (existsSync(path.join(configured, LSP_BIN))) {
+            return configured;
+        }
+        window.showWarningMessage(
+            `Delphi: ${LSP_BIN} was not found in the configured "delphi.bin" folder "${configured}". Using the newest installation instead.`
+        );
     }
-    return binPath;
+    return getDefaultDelphiBinPath();
 }

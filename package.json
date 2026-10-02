@@ -62,7 +62,7 @@
                 "delphi.bin": {
                     "type": "string",
                     "default": "",
-                    "description": "Path to Delphi `bin` folder. Defaults to newest installation."
+                    "description": "Path to Delphi `bin` folder (must contain DelphiLSP.exe). Defaults to newest installation."
                 },
                 "delphi.serverType": {
                     "type": "string",

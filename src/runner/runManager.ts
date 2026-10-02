@@ -1,6 +1,7 @@
-import * as path from 'path';
 import { loadConfigFileJson } from '../client/configFile';
-import { ProcessExecution, Task, tasks, TaskScope, window, workspace } from 'vscode';
+import { ProcessExecution, Task, tasks, TaskScope, window } from 'vscode';
+import { getDelphiBinDirectory } from '../utils/constantUtils';
+import { getRunScriptUri, initRunScript, resolveProjectPaths } from './scripts';
 
 export class RunManager {
     /**
@@ -9,19 +10,41 @@ export class RunManager {
      * @returns undefined
      */
     public async run() {
+        const scriptUri = getRunScriptUri();
+        if (!scriptUri) {
+            window.showWarningMessage('Delphi: Open a folder to run a project');
+            return;
+        }
         const json = await loadConfigFileJson();
         if (json === false) {
             window.showWarningMessage('Delphi: No config file have been set');
             return;
         }
-        const dccSettings = json.settings;
-        const projectDir = path.dirname(dccSettings.project);
-        const projectName = path.basename(dccSettings.project).split('.')[0];
+        const binDir = getDelphiBinDirectory();
+        if (!binDir) {
+            window.showErrorMessage('Delphi: No Delphi installation found to build the project');
+            return;
+        }
+        if (!(await initRunScript())) return; // Always run the current script version
 
-        const wsPath = workspace.workspaceFolders[0].uri.fsPath;
+        const { projectDir, dproj, exePath } = resolveProjectPaths(json.settings);
+        // Values are passed as separate arguments (no shell) so paths can't inject commands.
         const compileProcess = new ProcessExecution(
-            `${wsPath}/.vscode/delphi/scripts/run.bat`,
-            [`${wsPath}/.vscode/delphi/scripts/${projectName}_run.ps1`, 'run'],
+            'powershell.exe',
+            [
+                '-NoProfile',
+                '-ExecutionPolicy',
+                'Bypass',
+                '-File',
+                scriptUri.fsPath,
+                '-BinDir',
+                binDir,
+                '-Project',
+                dproj,
+                '-ExePath',
+                exePath,
+                '-Run',
+            ],
             {
                 cwd: projectDir,
             }
@@ -39,8 +62,9 @@ export class RunManager {
 
         const execution = await tasks.executeTask(task);
 
-        tasks.onDidEndTaskProcess(async (e) => {
+        const listener = tasks.onDidEndTaskProcess((e) => {
             if (e.execution === execution) {
+                listener.dispose();
                 if (e.exitCode === 0) {
                     window.showInformationMessage('Delphi: Exited successfully!');
                 } else {
