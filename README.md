@@ -1,8 +1,11 @@
 # delphi README
 
-> **NOTE**: This extension was only built to meet my own demand, and published on the off-chance that it might help someone else. There is now over 5K installations however, and I assume most needs are not met for Delphi development at the current state of the extension. Thus, **I encourage you to open a PR for any features you might miss**. I will hapily review and add any improvements or features.
+Delphi extension to allow developer tooling for Delphi in VSCode.
 
-Delphi extension to allow full developer tooling for Delphi in VSCode.
+If you have a *licensed install* of Embarcadero Delphi, this extension can be very useful should you need the help of a simple IDE to diagnose issues in dedicated build environments (e.g.: a VM used by your build pipelines), which typically do not need a full RAD Studion setup. Embarcadero allows you to copy the required binaries for the CLI utilities for checking and compiling your code to your build a build environment, and the extension configuration allows you to point to a non-standard Delphi bin path.
+
+> [!NOTE]
+> You will need a valid licensed Delphi install to copy the build tools from when setting up a dedicated build machine. This use scenario is covered and cited in Embarcadero documentation, however the required binaries are not openly distrubuted separately.
 
 ## Features
 
@@ -25,10 +28,10 @@ Delphi extension to allow full developer tooling for Delphi in VSCode.
 ## Extension Settings
 
 * `delphi.bin` Path to delphi `bin` folder (must contain `DelphiLSP.exe`). Defaults to newest installation.
+* `delphi.configFile` File URI of current LSP config (`<delphiProjectName>.delphilsp.json`)
 * `delphi.serverType` Defines the operation mode
 * `delphi.agentCount` Defines the number of sub processes (agents) when serverType is controller. If agentCount > 1 then one process will be dedicated to Error Insight
 * `delphi.logModes` Bit mask defining logging modes [1 (RawInputMessage), 2 (RawOutputMessage), 4 (Queue), 8 (Processor), 16 (Server), 32 (AgentFacade), 64 (DCC related), 128 (LSP Inspector traces)]
-* `delphi.configFile` File URI of current LSP config (.delphilsp.json)
 
 
 ## Release Notes
@@ -37,7 +40,12 @@ Check out [CHANGELOG](./CHANGELOG.md).
 
 ## Some credits
 
+- [delphi-vscode](https://github.com/Adventune/delphi-vscode)
+  - This is an updated fork of the original extension built by @Adventune.
 - [Pascal for VSCode](https://github.com/alefragnani/vscode-language-pascal/blob/master/snippets/pascal.json)
   - Copied syntax & snippets from here.
 - [DelphiLSP for VSCode](https://marketplace.visualstudio.com/items?itemName=EmbarcaderoTechnologies.delphilsp)
   - "Reverse engineered" (opened the extension with 7-Zip) some of the code for handling the custom notifications that are needed to be sent to the LSP.
+
+> [!NOTE]
+> From the original author: This extension was only built to meet my own demand, and published on the off-chance that it might help someone else. There is now over 5K installations however, and I assume most needs are not met for Delphi development at the current state of the extension. Thus, **I encourage you to open a PR for any features you might miss**. I will hapily review and add any improvements or features.
